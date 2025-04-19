@@ -83,20 +83,27 @@ def main():
 
 
         # Get quality preference
-        quality = get_video_quality()
+        quality = get_video_quality(url)
 
         # Get output directory preference
-        use_current = input("\nDefault Downloads directory is (~\\download\\YouTube), Want to specify another? (y/n): ").lower().strip()
+        use_current = input("\nDefault Downloads directory is \"~\\download\\YouTube\", Want to specify another? (y/n): ").lower().strip()
         output_dir = None
         if use_current == 'y':
             output_dir = input("Enter download directory path: ").strip()
             if not os.path.exists(output_dir):
-                print("Directory doesn't exist")
-                return
+                auto_create = input("Directory doesn't exist, want to create it? (y/n)").strip().lower()
+                if auto_create:
+                    try:
+                        os.makedirs(output_dir, exist_ok=True)
+                    except Exception as e:
+                        print(f"Failed to create directory: {e}")
+                        return
+                else:
+                    return
 
         # Download video
         print("\nStarting download...")
-        download_video(url, quality,is_playlist , output_dir)
+        download_video(url, quality, is_playlist, output_dir)
         print("\nDownload completed!")
 
     except KeyboardInterrupt:
